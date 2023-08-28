@@ -21,5 +21,4 @@ mongoose.connect(process.env.MONGO_URI)
     .catch(err => console.log(err))
 
 app.use('/auth', authRoutes);
-
-app.use('/events', eventRoutes);c
+app.use('/events', eventRoutes);

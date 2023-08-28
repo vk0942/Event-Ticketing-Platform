@@ -1,10 +1,9 @@
-
 const express = require('express');
 
-const Router = express.Router();
+const router = express.Router();
 
-Router.get('/', (req, res) => {
+router.get('/', (req, res) => {
     res.send('All events');
 });
 
-module.exports = Router;
+module.exports = router;

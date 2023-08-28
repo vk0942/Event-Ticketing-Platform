@@ -33,3 +33,5 @@ const eventSchema = new Schema({
         type: Number
     }
 });
+
+module.exports = mongoose.model('event', eventSchema);
