@@ -8,20 +8,19 @@ const eventSchema = new Schema({
         required: true,
     },
     start: {
-        type: Date,
+        type: String,
         required: true,
     },
     end: {
-        type: Date,
+        type: String,
     },
     reg_start:{
-        type: Date,
+        type: String,
     },
     reg_end:{
-        type: Date,
+        type: String,
         required: true
     },
-    tags: [String],
     venue: {
         type: String,
         required: true
@@ -30,8 +29,10 @@ const eventSchema = new Schema({
         type: String,
     },
     booked: {
-        type: Number
-    }
-});
+        type: Number,
+        default: 0
+    },
+    tags: [String]
+}, { timestamps: true });
 
 module.exports = mongoose.model('event', eventSchema);
