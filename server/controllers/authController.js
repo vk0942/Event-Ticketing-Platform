@@ -86,7 +86,7 @@ const emailVerification = async (req, res) => {
     await user.save();
 
     res.status(201).json({
-        "message" : "Email Verified Sucessfully"
+        "message" : "Email Verified Successfully"
     });
 
 }
@@ -202,10 +202,21 @@ const resetPassword = async (req, res) => {
     await user.save();
 
     res.status(201).json({
-        "message" : "Password Updated Sucessfully"
+        "message" : "Password Updated Successfully"
     });
 
 }
+
+const deleteAccount = async (req,res) => {
+
+    const { id } = req.params;
+
+    await User.findByIdAndDelete(id);
+
+    res.status(201).json({
+        "message" : "Account Deleted Successfully"
+    });
+} 
 
 module.exports = {
     signup,
@@ -213,4 +224,5 @@ module.exports = {
     signin,
     forgotPassword,
     resetPassword,
+    deleteAccount
 }

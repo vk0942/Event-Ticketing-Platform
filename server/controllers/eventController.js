@@ -43,7 +43,7 @@ const createEvent = async (req, res) => {
     await event.save();
 
     res.status(201).json({
-        "message" : "Event Created Sucessfully"
+        "message" : "Event Created Successfully"
     });
 };
 
@@ -69,7 +69,7 @@ const updateEvent = async (req, res) => {
     await event.save();
 
     res.status(201).json({
-        "message" : "Event Updated Sucessfully"
+        "message" : "Event Updated Successfully"
     });
 };
 
@@ -79,7 +79,7 @@ const deleteEvent = async (req, res) => {
     await Event.findByIdAndDelete(id);
 
     res.status(201).json({
-        "message" : "Event Deleted Sucessfully"
+        "message" : "Event Deleted Successfully"
     });
 };
 

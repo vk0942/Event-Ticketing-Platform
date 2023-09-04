@@ -8,8 +8,6 @@ router.get('/', allEvents);
 
 router.get('/:id', getEvent);
 
-router.post('')
-
 router.post('/create', createEvent);
 
 router.post('/update', updateEvent);
