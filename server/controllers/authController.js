@@ -1,5 +1,9 @@
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
+const sendEmail = require('../utils/sendEmail');
+const user = require('../models/user');
 
 let errors = {
     username : "",
@@ -8,7 +12,8 @@ let errors = {
 };
 
 const signup = async (req,res) => {
-    const {fname, lname, username, email, password, dob} = req.body;
+
+    const { fname, lname, username, email, password, dob } = req.body;
 
     const usernameAlreadyExists = await User.findOne({ username });
     const emailAlreadyExists = await User.findOne({ email });
@@ -27,17 +32,66 @@ const signup = async (req,res) => {
     const Password = await bcrypt.hash(password, salt);
 
     const user = new User({
-        fname, lname, username, email, password : Password, dob
+        fname, lname, username, email, password : Password, dob,
     });
 
+    const verificationToken = crypto.randomBytes(20).toString('hex');
+
+    user.emailVerificationToken = crypto.createHash('sha256').update(verificationToken).digest('hex');
+
+    user.emailVerificationExpire = Date.now() + (24 * 60 * 60 * 1000);
+
     await user.save();
+
+    const verificationUrl = `http://localhost:3000/${verificationToken}`;
+
+    const message = `
+        <h2> Thank You for registering with us! </h2>
+        <p> Please click the below button to verify your email </p>
+        <button> <a href=${verificationUrl} clicktracking=off> Verify Email </a> </button>
+    `
+
+    await sendEmail({
+        from: 'userauthms@gmail.com',
+        to: email,
+        subject: 'Email Verification',
+        html: message
+    });
+
+    console.log('Email Sent');
 
     res.status(201).json({ 
         "message" : "Successfully Registered"
     });    
 }
 
-const signin = async (req,res) => {
+const emailVerification = async (req, res) => {
+
+    const emailVerificationToken = crypto.createHash('sha256').update(req.params.verificationToken).digest('hex');
+
+    const user = await User.findOne({
+        emailVerificationToken,
+        emailVerificationExpire: { $gt: Date.now() }
+    });
+
+    if(!user){
+        errors.email = 'Invalid Verification Token';
+        return res.status(404).json({ errors });
+    }
+
+    user.isVerified = true;
+    user.emailVerificationToken = undefined;
+    user.emailVerificationExpire = undefined;
+
+    await user.save();
+
+    res.status(201).json({
+        "message" : "Email Verified Sucessfully"
+    });
+
+}
+
+const signin = async (req, res) => {
 
     const { usernameOrEmail, password } = req.body;
     const usernameExists = await User.findOne({ username : usernameOrEmail });
@@ -47,13 +101,25 @@ const signin = async (req,res) => {
         errors.username = "Username or Email not found!";
         return res.status(404).json({ errors });
     }
-
+    let user;
     let hashPassword;
     if(usernameExists){
-       hashPassword = usernameExists.password;
+        user = usernameExists;
+        if(!usernameExists.isVerified){
+            errors.email = 'Please Verify your Email first';
+            return res.status(401).json({ errors });
+        }
+
+        hashPassword = usernameExists.password;
     }
     if(emailExists){
-       hashPassword = emailExists.password;
+        user = emailExists;
+        if(!emailExists.isVerified){
+            errors.email = 'Please Verify your Email first';
+            return res.status(401).json({ errors });
+        }
+
+        hashPassword = emailExists.password;
     }
 
     const auth = await bcrypt.compare(password, hashPassword);
@@ -62,28 +128,88 @@ const signin = async (req,res) => {
         return res.status(401).json({ errors });
     }
 
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: '24h'
+    });
+
     res.status(201).json({ 
-        "message" : "Signed In Successfully"
+        "message" : "Signed In Successfully",
+        token
     });
 }
 
 const forgotPassword = async (req, res) => {
-    const { usernameOrEmail } = req.body;
-    const user = 
-    // sendEmail(usernameorEmail);
+
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if(!user){
+        errors.email = 'Email not found';
+        return res.status(404).json({ errors });
+    }
+
+    const resetPasswordToken = crypto.randomBytes(20).toString('hex');
+    user.resetPasswordToken = crypto.createHash('sha256').update(resetPasswordToken).digest('hex');
+    user.resetPasswordExpire = Date.now() + (10 * 60 * 1000);
+
+    await user.save();
+
+    const resetPasswordUrl = `http://localhost:3000/${resetPasswordToken}`;
+
+    const message = `
+        <h2> You requested a password reset </h2>
+        <h2> Click on this button to reset your password </h2>
+        <button> <a href=${resetPasswordUrl}> Reset Password </a> </button> 
+    `;
+
+    await sendEmail({
+        from : "userauthms@gmail.com",
+        to : email,
+        subject : "Password Reset",
+        html : message
+    });
+     
+    res.status(201).json({
+        "message" : "Email Sent"
+    });
+
 }
 
 const resetPassword = async (req, res) => {
+    
     const { password } = req.body;
-    const { id } = req.params;
 
-    // find user from the url
-    let user = User.findOne({ id });
-    user.password = password;
+    const resetPasswordToken = crypto.createHash('sha256').update(req.params.resetToken).digest('hex');
+
+    const user = await User.findOne({
+        resetPasswordToken,
+        resetPasswordExpire: { $gt: Date.now() }
+    });
+
+    if(!user){
+        errors.password = 'Invalid Token';
+        return res.status(401).json({ errors });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const Password = await bcrypt.hash(password, salt);
+
+    user.password = Password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+
+    await user.save();
+
+    res.status(201).json({
+        "message" : "Password Updated Sucessfully"
+    });
+
 }
 
 module.exports = {
     signup,
+    emailVerification,
     signin,
     forgotPassword,
     resetPassword,
