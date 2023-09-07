@@ -3,13 +3,22 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const sendEmail = require('../utils/sendEmail');
-const user = require('../models/user');
 
 let errors = {
     username : "",
     email : "",
     password : "",
+    token: "",
 };
+
+const clearErrors = () => {
+    errors = {
+        username : "",
+        email : "",
+        password : "",
+        token: "",
+    };
+}
 
 const signup = async (req,res) => {
 
@@ -17,6 +26,8 @@ const signup = async (req,res) => {
 
     const usernameAlreadyExists = await User.findOne({ username });
     const emailAlreadyExists = await User.findOne({ email });
+
+    clearErrors();
 
     if(usernameAlreadyExists){
         errors.username = "Username Already Exists!";
@@ -43,7 +54,7 @@ const signup = async (req,res) => {
 
     await user.save();
 
-    const verificationUrl = `http://localhost:3000/${verificationToken}`;
+    const verificationUrl = `http://localhost:3000/auth/email-verification/${verificationToken}`;
 
     const message = `
         <h2> Thank You for registering with us! </h2>
@@ -74,8 +85,10 @@ const emailVerification = async (req, res) => {
         emailVerificationExpire: { $gt: Date.now() }
     });
 
+    clearErrors();
+
     if(!user){
-        errors.email = 'Invalid Verification Token';
+        errors.token = 'Invalid Verification Token';
         return res.status(404).json({ errors });
     }
 
@@ -97,6 +110,8 @@ const signin = async (req, res) => {
     const usernameExists = await User.findOne({ username : usernameOrEmail });
     const emailExists = await User.findOne({ email : usernameOrEmail });
 
+    clearErrors();
+
     if(!usernameExists && !emailExists){
         errors.username = "Username or Email not found!";
         return res.status(404).json({ errors });
@@ -106,7 +121,7 @@ const signin = async (req, res) => {
     if(usernameExists){
         user = usernameExists;
         if(!usernameExists.isVerified){
-            errors.email = 'Please Verify your Email first';
+            errors.username = 'Please Verify your Email first';
             return res.status(401).json({ errors });
         }
 
@@ -115,7 +130,7 @@ const signin = async (req, res) => {
     if(emailExists){
         user = emailExists;
         if(!emailExists.isVerified){
-            errors.email = 'Please Verify your Email first';
+            errors.username = 'Please Verify your Email first';
             return res.status(401).json({ errors });
         }
 
@@ -144,6 +159,8 @@ const forgotPassword = async (req, res) => {
 
     const user = await User.findOne({ email });
 
+    clearErrors();
+
     if(!user){
         errors.email = 'Email not found';
         return res.status(404).json({ errors });
@@ -155,7 +172,7 @@ const forgotPassword = async (req, res) => {
 
     await user.save();
 
-    const resetPasswordUrl = `http://localhost:3000/${resetPasswordToken}`;
+    const resetPasswordUrl = `http://localhost:3000/auth/reset-password/${resetPasswordToken}`;
 
     const message = `
         <h2> You requested a password reset </h2>
@@ -187,8 +204,10 @@ const resetPassword = async (req, res) => {
         resetPasswordExpire: { $gt: Date.now() }
     });
 
+    clearErrors();
+
     if(!user){
-        errors.password = 'Invalid Token';
+        errors.token = 'Invalid Token';
         return res.status(401).json({ errors });
     }
 
@@ -203,6 +222,16 @@ const resetPassword = async (req, res) => {
 
     res.status(201).json({
         "message" : "Password Updated Successfully"
+    });
+
+}
+
+const userDetails = async (req, res) => {
+
+    const user = req.user;
+
+    res.status(201).json({
+        user
     });
 
 }
@@ -224,5 +253,6 @@ module.exports = {
     signin,
     forgotPassword,
     resetPassword,
+    userDetails,
     deleteAccount
 }

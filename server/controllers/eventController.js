@@ -1,7 +1,8 @@
 const Event = require('../models/events');
+const mongoose = require('mongoose');
 
 const allEvents = async (req, res) => {
-    const events = await Event.find().sort({ createdAt : -1 });
+    const events = await Event.find({}).sort({ createdAt : -1 });
 
     // events.forEach(event => {
     //     let id = (event._id).toString();
@@ -14,18 +15,25 @@ const allEvents = async (req, res) => {
 const getEvent = async (req, res) => {
     const { id } = req.params;
 
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({
+            "message" : "No such event"
+        });
+    }
+
     const event = await Event.findById(id);
 
     if(!event){
         return res.status(404).json({
-            "message" : "No such event exists!"
-        })
+            "message" : "No such event"
+        });
     }
 
     res.status(201).json({ event });
 };
 
 const createEvent = async (req, res) => {
+
     const { title, start, end, reg_start, reg_end, venue, description } = req.body;
 
     const eventExists = await Event.findOne({ title });
@@ -37,7 +45,7 @@ const createEvent = async (req, res) => {
     }
 
     const event = new Event({
-        title, start, end, reg_start, reg_end, venue, description
+        title, start, end, reg_start, reg_end, venue, description, createdBy: req.user._id
     });
 
     await event.save();
