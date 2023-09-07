@@ -6,9 +6,19 @@ const mongoose = require('mongoose');
 const authRoutes = require('./routes/authRoutes'); 
 const eventRoutes = require('./routes/eventRoutes'); 
 
+const cors = require('cors');
+
 const app = express();
 
 app.use(express.json());
+app.use(cors());
+
+app.use(
+    cors({
+      origin: "http://localhost:3000",
+      credentials: true,
+    })
+  );
 
 const PORT = process.env.PORT || 5000;
 
@@ -18,7 +28,19 @@ mongoose.connect(process.env.MONGO_URI)
             console.log(`Connected to db and listening on port ${PORT}`);
         });
     })
-    .catch(err => console.log(err))
+
+app.use((req, res, next) => {
+    res.setHeader(
+        "Access-Control-Allow-Origin",
+        "http://localhost:3000"
+    );
+    res.header(
+        "Access-Control-Allow-Origin",
+        "Origin,X-Requested-With,Content-Type,Accept",
+        "Access-Control-Allow-Methods: GET, DELETE, PUT, PATCH, HEAD, OPTIONS, POST"
+    );
+    next();
+    });
 
 app.use('/auth', authRoutes);
 

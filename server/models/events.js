@@ -28,6 +28,10 @@ const eventSchema = new Schema({
     description: {
         type: String,
     },
+    createdBy: {
+        type: String,
+        required: true
+    },
     booked: {
         type: Number,
         default: 0

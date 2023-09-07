@@ -1,3 +1,62 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+*{
+    margin: 0px;
+    padding: 0px;
+}
+
+.container{
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 1600px;
+}
+
+.home{
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    max-width: 1600px;
+}
+
+.single-event{
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    max-width: 1600px;
+}
+
+.navbar{
+    max-width: 93vw;
+}
+
+.error{
+    border: 2px solid red;
+}
+
+.signup-form form, .signin-form form, .forgotpassword form, .resetpassword form, .createEvent form{
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 25px 20px;
+}
+
+.signup-form h1, .signin-form h1, .forgotpassword h1, .resetpassword h1, .createEvent h1{
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 22px;
+    font-weight: 700;
+}
+
+.signin-form h3, .signup-form h3, .forgotpassword h3, .resetpassword h3{
+    margin-top: 15px;
+}
+
