@@ -14,7 +14,6 @@ import PrivateRoute from './utils/PrivateRoute';
 import Footer from './components/Footer';
 
 import 'flowbite';
-import  Navigation from './components/Navigation';
 
 function App() {
   return (
