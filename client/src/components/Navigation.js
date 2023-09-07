@@ -1,34 +1,7 @@
-import { Carousel } from 'flowbite-react';
-import { Link } from 'react-router-dom';
+import { Navbar, Button } from 'flowbite-react';
 
-const Home = () => {
-    return (
-        
-        <div className='home bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% ...'>
-
-            <Carousel slideInterval={3000} className='w-full h-2/3'>
-                <img
-                    alt="..."
-                    src="https://flowbite.com/docs/images/carousel/carousel-1.svg"
-                />
-                <img
-                    alt="..."
-                    src="https://flowbite.com/docs/images/carousel/carousel-2.svg"
-                />
-                <img
-                    alt="..."
-                    src="https://flowbite.com/docs/images/carousel/carousel-3.svg"
-                />
-                <img
-                    alt="..."
-                    src="https://flowbite.com/docs/images/carousel/carousel-4.svg"
-                />
-                <img
-                    alt="..."
-                    src="https://flowbite.com/docs/images/carousel/carousel-5.svg"
-                />
-            </Carousel>
-
+const Navigation = () => {
+    return ( 
 
         <nav class="bg-white border-gray-200 dark:bg-gray-900">
         <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -84,15 +57,13 @@ const Home = () => {
                 <a href="#" class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Pricing</a>
             </li>
             <li>
-                <a href="#" class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Contact</a>
+                <a href="#" class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Contact/Phone</a>
             </li>
             </ul>
         </div>
         </div>
         </nav>
-
-
-    );
+     );
 }
- 
-export default Home;
+        
+export default Navigation;
