@@ -11,7 +11,7 @@ const EmailVerification = () => {
 
         const Verify = async () => {
 
-            const response = await fetch(`/auth/email-verification/${verificationToken}`, {
+            const response = await fetch(`https://vast-pear-blackbuck-suit.cyclic.app/auth/email-verification/${verificationToken}`, {
                 method : 'POST',
                 headers: { 'Content-Type' : 'application/json' },
             });

@@ -54,7 +54,7 @@ const signup = async (req,res) => {
 
     await user.save();
 
-    const verificationUrl = `http://localhost:3000/auth/email-verification/${verificationToken}`;
+    const verificationUrl = `https://ticketvibe.vercel.app/auth/email-verification/${verificationToken}`;
 
     const message = `
         <h2> Thank You for registering with us! </h2>
@@ -172,7 +172,7 @@ const forgotPassword = async (req, res) => {
 
     await user.save();
 
-    const resetPasswordUrl = `http://localhost:3000/auth/reset-password/${resetPasswordToken}`;
+    const resetPasswordUrl = `https://ticketvibe.vercel.app/auth/reset-password/${resetPasswordToken}`;
 
     const message = `
         <h2> You requested a password reset </h2>

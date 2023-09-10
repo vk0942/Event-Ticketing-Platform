@@ -12,7 +12,7 @@ const AllEvents = () => {
 
         const getEvents = async () => {
 
-            const response = await fetch('/events/', {
+            const response = await fetch('https://vast-pear-blackbuck-suit.cyclic.app/events/', {
                 method: 'GET',
                 headers: { 'Content-Type' : 'application/json' }
             });
