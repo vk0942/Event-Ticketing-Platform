@@ -71,7 +71,7 @@ const signup = async (req,res) => {
 
     console.log('Email Sent');
 
-    res.status(201).json({ 
+    res.status(200).json({ 
         "message" : "Successfully Registered"
     });    
 }
@@ -98,7 +98,7 @@ const emailVerification = async (req, res) => {
 
     await user.save();
 
-    res.status(201).json({
+    res.status(200).json({
         "message" : "Email Verified Successfully"
     });
 
@@ -150,7 +150,7 @@ const signin = async (req, res) => {
     // user._id = undefined;
     user.password = undefined;
 
-    res.status(201).json({ token, user });
+    res.status(200).json({ token, user });
 }
 
 const forgotPassword = async (req, res) => {
@@ -187,7 +187,7 @@ const forgotPassword = async (req, res) => {
         html : message
     });
      
-    res.status(201).json({
+    res.status(200).json({
         "message" : "Email Sent"
     });
 
@@ -220,7 +220,7 @@ const resetPassword = async (req, res) => {
 
     await user.save();
 
-    res.status(201).json({
+    res.status(200).json({
         "message" : "Password Updated Successfully"
     });
 
@@ -242,7 +242,7 @@ const deleteAccount = async (req,res) => {
 
     await User.findByIdAndDelete(id);
 
-    res.status(201).json({
+    res.status(200).json({
         "message" : "Account Deleted Successfully"
     });
 } 

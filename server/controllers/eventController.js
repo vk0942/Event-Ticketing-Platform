@@ -7,7 +7,7 @@ const allEvents = async (req, res) => {
     
     const events = await Event.find({}).sort({ createdAt : -1 });
 
-    res.status(201).json({ events });
+    res.status(200).json({ events });
 };
 
 const getEvent = async (req, res) => {
@@ -26,7 +26,7 @@ const getEvent = async (req, res) => {
         return res.status(404).json({ errors });
     }
 
-    res.status(201).json({ event });
+    res.status(200).json({ event });
 };
 
 const createEvent = async (req, res) => {
@@ -46,7 +46,7 @@ const createEvent = async (req, res) => {
 
     await event.save();
 
-    res.status(201).json({ event, message: "Event Created Successfully" });
+    res.status(200).json({ event, message: "Event Created Successfully" });
 };
 
 const updateEvent = async (req, res) => {
@@ -71,7 +71,7 @@ const updateEvent = async (req, res) => {
 
     await event.save();
 
-    res.status(201).json({
+    res.status(200).json({
         "message" : "Event Updated Successfully"
     });
 };
@@ -82,7 +82,7 @@ const deleteEvent = async (req, res) => {
 
     await Event.findByIdAndDelete(id);
 
-    res.status(201).json({
+    res.status(200).json({
         message : "Event Deleted Successfully"
     });
 
@@ -106,7 +106,7 @@ const bookEvent = async (req, res) => {
     event.bookedBy.push(user_id);
     await event.save();
 
-    res.status(201).json({
+    res.status(200).json({
         message: "Event Ticket Booked Successfully"
     });
 
