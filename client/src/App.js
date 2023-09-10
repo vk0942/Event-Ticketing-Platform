@@ -5,7 +5,6 @@ import Home from './pages/Home';
 import AllEvents from './pages/events/AllEvents';
 import Event from './pages/events/Event';
 import CreateEvent from './pages/events/CreateEvent';
-import UpdateEvent from './pages/events/UpdateEvent';
 import SignUp from './pages/auth/SignUp';
 import SignIn from './pages/auth/SignIn';
 import Profile from './pages/auth/Profile';

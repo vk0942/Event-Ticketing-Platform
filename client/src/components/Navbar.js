@@ -21,7 +21,7 @@ export default function NavbarWithDropdown() {
     if (signedin) {
       setUserDetails(user.user);
     }
-  }, [user, dispatch]);
+  }, [signedin, user, dispatch]);
 
   return (
 

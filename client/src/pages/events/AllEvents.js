@@ -27,7 +27,7 @@ const AllEvents = () => {
 
         getEvents();
 
-    }, []);
+    }, [dispatch]);
 
 
     return (

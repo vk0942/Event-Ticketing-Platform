@@ -30,13 +30,13 @@ const Event = () => {
             }
         }
 
-    }, [events, dispatch]);
+    }, [events, dispatch, id]);
 
     useEffect(() => {
         if (signedin) {
           setUserDetails(user.user);
         }
-    }, [user]);
+    }, [signedin, user]);
 
 
     const handleBook = async (e) => {

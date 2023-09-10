@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { Card } from 'flowbite-react';
 
@@ -8,13 +7,12 @@ const Profile = () => {
     const [userDetails, setUserDetails] = useState({});
 
     const { signedin, user, dispatch } = useAuthContext();
-    const navigate = useNavigate();
 
     useEffect(() => {
         if (signedin) {
           setUserDetails(user.user);
         }
-    }, [user, dispatch]);
+    }, [signedin, user, dispatch]);
 
     return (
         <div className='container bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% ...'>
