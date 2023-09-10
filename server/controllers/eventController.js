@@ -1,32 +1,29 @@
 const Event = require('../models/events');
 const mongoose = require('mongoose');
 
-const allEvents = async (req, res) => {
-    const events = await Event.find({}).sort({ createdAt : -1 });
+let errors = "";
 
-    // events.forEach(event => {
-    //     let id = (event._id).toString();
-    //     console.log(id);
-    // });
+const allEvents = async (req, res) => {
+    
+    const events = await Event.find({}).sort({ createdAt : -1 });
 
     res.status(201).json({ events });
 };
 
 const getEvent = async (req, res) => {
+    
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({
-            "message" : "No such event"
-        });
+        errors = "No such event";
+        return res.status(404).json({ errors });
     }
 
     const event = await Event.findById(id);
 
     if(!event){
-        return res.status(404).json({
-            "message" : "No such event"
-        });
+        errors = "No such event";
+        return res.status(404).json({ errors });
     }
 
     res.status(201).json({ event });
@@ -36,12 +33,11 @@ const createEvent = async (req, res) => {
 
     const { title, start, end, reg_start, reg_end, venue, description } = req.body;
 
-    const eventExists = await Event.findOne({ title });
+    const eventExists = await Event.findOne({ title, start, end, reg_start, reg_end, venue, description });
 
     if(eventExists){
-        return res.status(401).json({
-            "message" : "An Event with the same title already exists"
-        });
+        errors = "An Event with the same details already exists";
+        return res.status(401).json({ errors });
     }
 
     const event = new Event({
@@ -50,12 +46,11 @@ const createEvent = async (req, res) => {
 
     await event.save();
 
-    res.status(201).json({
-        "message" : "Event Created Successfully"
-    });
+    res.status(201).json({ event, message: "Event Created Successfully" });
 };
 
 const updateEvent = async (req, res) => {
+
     const { oldtitle, newtitle, start, end, reg_start, reg_end, venue, description } = req.body;
 
     const event = await Event.findOne({ title: oldtitle });
@@ -82,14 +77,40 @@ const updateEvent = async (req, res) => {
 };
 
 const deleteEvent = async (req, res) => {
+
     const { id } = req.params;
 
     await Event.findByIdAndDelete(id);
 
     res.status(201).json({
-        "message" : "Event Deleted Successfully"
+        message : "Event Deleted Successfully"
     });
+
 };
+
+const bookEvent = async (req, res) => {
+    const { event_id, user_id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(event_id)) {
+        errors = "No such event";
+        return res.status(404).json({ errors });
+    }
+
+    const event = await Event.findById(event_id);
+
+    if (!event) {
+        errors = "No such event";
+        return res.status(404).json({ errors });
+    }
+
+    event.bookedBy.push(user_id);
+    await event.save();
+
+    res.status(201).json({
+        message: "Event Ticket Booked Successfully"
+    });
+
+}
 
 
 module.exports = {
@@ -98,4 +119,5 @@ module.exports = {
     createEvent,
     updateEvent,
     deleteEvent,
+    bookEvent,
 }

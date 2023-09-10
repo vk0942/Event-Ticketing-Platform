@@ -147,10 +147,10 @@ const signin = async (req, res) => {
         expiresIn: '24h'
     });
 
-    res.status(201).json({ 
-        "message" : "Signed In Successfully",
-        token
-    });
+    // user._id = undefined;
+    user.password = undefined;
+
+    res.status(201).json({ token, user });
 }
 
 const forgotPassword = async (req, res) => {

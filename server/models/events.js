@@ -32,10 +32,7 @@ const eventSchema = new Schema({
         type: String,
         required: true
     },
-    booked: {
-        type: Number,
-        default: 0
-    },
+    bookedBy: [String],
     tags: [String]
 }, { timestamps: true });
 
