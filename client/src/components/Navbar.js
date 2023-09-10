@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { Avatar, Dropdown, Navbar, Button } from 'flowbite-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -100,8 +99,6 @@ export default function NavbarWithDropdown() {
 
 
     </div>
-
-    
   )
 }
 
