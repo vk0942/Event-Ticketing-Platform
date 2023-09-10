@@ -15,7 +15,7 @@ app.use(cors());
 
 app.use(
     cors({
-      origin: "http://localhost:3000",
+      origin: "https://ticketvibe.vercel.app",
       credentials: true,
     })
   );
@@ -32,7 +32,7 @@ mongoose.connect(process.env.MONGO_URI)
 app.use((req, res, next) => {
     res.setHeader(
         "Access-Control-Allow-Origin",
-        "http://localhost:3000"
+        "https://ticketvibe.vercel.app"
     );
     res.header(
         "Access-Control-Allow-Origin",
