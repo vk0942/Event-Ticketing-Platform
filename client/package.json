@@ -1,6 +1,6 @@
 {
   "proxy": "http://localhost:5000",
-  "name": "client",
+  "name": "ticketvibe",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -41,6 +41,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.15",
+    "gh-pages": "^6.0.0",
     "postcss": "^8.4.29",
     "tailwindcss": "^3.3.3"
   }

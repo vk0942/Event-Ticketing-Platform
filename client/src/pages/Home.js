@@ -1,6 +1,4 @@
-import { useEffect } from 'react';
 import { Carousel } from 'flowbite-react';
-import { Link } from 'react-router-dom';
 
 const Home = () => {
 
