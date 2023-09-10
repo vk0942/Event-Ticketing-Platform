@@ -1,35 +1,69 @@
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Carousel, Card } from 'flowbite-react'; 
+import { useAuthContext } from '../../hooks/useAuthContext';
+import { useEventContext } from '../../hooks/useEventContext';
 
 const Event = () => {
 
     const [event, setEvent] = useState('');
     const [errors, setErrors] = useState('');
+    const [userDetails, setUserDetails] = useState('');
+    const navigate = useNavigate();
 
     const { id } = useParams();
 
+    const { events, dispatch } = useEventContext();
+    const { signedin, user } = useAuthContext();
+
     useEffect(() => {
 
-        const eventDetails = async () => {
-            const response = await fetch(`/events/${id}`, {
-                method: 'GET',
-                headers: { 'Content-Type' : 'application/json' }
+        if (events) {
+            const selectedEvent = events.filter((e) => {
+                return e._id === id;
             });
-            const data = await response.json();
-
-            if(data.event){
-                setEvent(data.event);
-            }
-            else{
-                setErrors(data.message);
+    
+            if (selectedEvent.length > 0) setEvent(selectedEvent[0]);
+            else {
+                setErrors(`The event you are looking for doesn't exist :/. Make Sure the URL is correct`);
             }
         }
 
-        eventDetails();
+    }, [events, dispatch]);
 
-    }, []);
+    useEffect(() => {
+        if (signedin) {
+          setUserDetails(user.user);
+        }
+    }, [user]);
+
+
+    const handleBook = async (e) => {
+        e.preventDefault();
+
+        if (!signedin) {
+            navigate('/auth/signin');
+            return;
+        }
+
+        // console.log(userDetails._id);
+        const user_id = userDetails._id;
+        const response = await fetch(`http://localhost:5000/events/book-event/${id}/${user_id}`, {
+            method: 'POST',
+            headers: { 'Content-Type' : 'application/json' }
+        });
+
+        const data = await response.json();
+
+        if (data.errors) {
+            
+        }
+        else {
+            alert('Event Ticket Booked Successfully');
+        }
+
+    }
 
 
     return (
@@ -64,9 +98,9 @@ const Event = () => {
 
                             
                     <Card
-                        imgAlt="Meaningful alt text for an image that is not purely decorative"
+                        imgAlt=""
                         imgSrc="/images/blog/image-1.jpg"
-                        className='w-1/2'
+                        className='w-1/4 flex items-center justify-center'
                     >
                         <h5 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
                             <p> {event.title} </p> 
@@ -88,13 +122,10 @@ const Event = () => {
                         </h5>
                         <h5 className="text-lg font-medium tracking-tight text-gray-900 dark:text-white">
                             <p> Description - {event.description} </p> 
-                        </h5>        
+                        </h5>      
+
+                        <button type="button" class="text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800" onClick={handleBook}> <a href='/'> Book a Ticket </a> </button> 
                             
-                        {/* <p className="font-normal text-gray-700 dark:text-gray-400">
-                                    <p>
-                                    Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.
-                                    </p>
-                                </p> */}    
                     </Card>
 
                 </div>
@@ -103,7 +134,7 @@ const Event = () => {
 
             {errors && 
                 <div className='container'>
-                    <div className='font-bold text-3xl'> The event you are looking for doesn't exist :/. Make Sure the URL is correct </div>
+                    <div className='font-bold text-3xl'> { errors } </div>
                 </div> 
             }
             

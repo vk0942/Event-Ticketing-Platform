@@ -1,5 +1,7 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useEventContext } from '../../hooks/useEventContext';
 
 const CreateEvent = () => {
 
@@ -12,23 +14,55 @@ const CreateEvent = () => {
     const [description, setDescription] = useState('');
 
     const [status, setStatus] = useState('');
+    const [errors, setErrors] = useState('');
+    const navigate = useNavigate();
+
+    const { dispatch } = useEventContext();
+
+    useEffect(() => {
+
+        const user = localStorage.getItem('userToken');
+
+        if (!user) {
+            dispatch({ type: 'SIGNOUT' });
+            navigate('/auth/signin');
+        }
+
+    }, []);
 
     const handleSubmit = async (e) => {
 
         e.preventDefault();
 
+        const token = JSON.parse(localStorage.getItem('userToken')).token;
+
         const response = await fetch('/events/create', {
             method: 'POST',
             headers: { 
                 'Content-Type' : 'application/json',
-                'Authorization' : `Bearer ${localStorage.getItem('userToken')}`
+                'Authorization' : `Bearer ${token}`
             },
             body: JSON.stringify({ title, start: eventstart, end: eventend, reg_start: regstart, reg_end: regend, venue, description })
         });
 
         const data = await response.json();
 
-        setStatus(data.message);
+        if (data.errors) {
+            setErrors(data.errors);
+        }
+        else {
+            setTitle('');
+            setEventStart('');
+            setEventEnd('');
+            setRegStart('');
+            setRegEnd('');
+            setVenue('');
+            setDescription('');
+            setStatus(data.message);
+
+            dispatch({ type: 'CREATE_EVENT', payload: data.event});
+            navigate('/events');
+        }
 
     }
 
@@ -107,9 +141,10 @@ const CreateEvent = () => {
 
                 <button className="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 w-28">Submit</button>
 
-                </form>
-
                 {status}
+                {errors}
+
+                </form>
 
             </div>
 

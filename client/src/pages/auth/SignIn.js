@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import jwt_decode from 'jwt-decode';
+import { useAuthContext } from '../../hooks/useAuthContext';
 
 const SignIn = () => {
 
@@ -9,15 +10,13 @@ const SignIn = () => {
     const [password, setPassword] = useState('');
 
     const [errors, setErrors] = useState({});
-    const [status, setStatus] = useState('');
     const navigate = useNavigate();
+
+    const { dispatch } = useAuthContext();
 
     const handleSubmit = async (e) => {
 
         e.preventDefault();
-
-        setErrors({});
-        setStatus('');
 
         const response = await fetch('/auth/signin', {
             method: 'POST',
@@ -27,16 +26,20 @@ const SignIn = () => {
 
         const data = await response.json();
 
-        if(data.errors){
+        if (data.errors) {
             setErrors(data.errors);
         }
-        else{
-            setStatus(data.message);
+        else {
             setErrors({});
             setEmail('');
             setPassword('');
 
-            localStorage.setItem('userToken', data.token);
+            console.log(data);
+            console.log(JSON.stringify(data));
+
+            localStorage.setItem('userToken', JSON.stringify(data));
+            dispatch({ type: 'SIGNIN', payload: data });
+
             navigate('/');
         }
     }
@@ -81,7 +84,7 @@ const SignIn = () => {
             
             <form className='rounded' onSubmit={handleSubmit}>
 
-                <h1> Signin Form </h1>
+                <h1> Signin </h1>
 
                     <div className="relative z-0 w-full mb-6 group">
                         <input type="text" name="floating_email" id="floating_email" className="block py-2.5 px-0 w-80 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required 
@@ -114,7 +117,7 @@ const SignIn = () => {
 
                     <div id='signInDiv' className='mt-3 mb-1'>  </div>
 
-                    <h3 className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"> Dont have an account? <a href="/auth/signup" className="text-blue-600 dark:text-blue-500"> Signup </a> </h3>
+                    <h3 className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"> Don't have an account? <a href="/auth/signup" className="text-blue-600 dark:text-blue-500"> Signup </a> </h3>
 
             </form>
 

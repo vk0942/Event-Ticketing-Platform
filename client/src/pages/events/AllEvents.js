@@ -1,15 +1,17 @@
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Card } from 'flowbite-react';
+import { Card } from 'flowbite-react';
+import { useEventContext } from '../../hooks/useEventContext';
 
 const AllEvents = () => {
 
-    const [events, setEvents] = useState('');
+    const { events, dispatch } = useEventContext();
 
     useEffect(() => {
 
         const getEvents = async () => {
+
             const response = await fetch('/events/', {
                 method: 'GET',
                 headers: { 'Content-Type' : 'application/json' }
@@ -17,12 +19,15 @@ const AllEvents = () => {
 
             const data = await response.json();
 
-            setEvents(data.events);
+            console.log(data);
+
+            localStorage.setItem('events', JSON.stringify(data));
+            dispatch({ type: 'SET_EVENTS', payload: data.events });
         }
 
         getEvents();
 
-    });
+    }, []);
 
 
     return (
@@ -40,7 +45,7 @@ const AllEvents = () => {
                         </h5>
                         <p className="font-normal text-gray-700 dark:text-gray-400">
                             <p>
-                            Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.
+                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente a ipsa sed ipsum at doloribus distinctio soluta inventore vel harum, provident fugit assumenda obcaecati, illum quae pariatur vero in molestiae.
                             </p>
                         </p>
                     </Card>

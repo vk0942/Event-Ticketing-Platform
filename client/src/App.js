@@ -1,33 +1,33 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import AllEvents from './pages/events/AllEvents';
 import Event from './pages/events/Event';
 import CreateEvent from './pages/events/CreateEvent';
+import UpdateEvent from './pages/events/UpdateEvent';
 import SignUp from './pages/auth/SignUp';
 import SignIn from './pages/auth/SignIn';
+import Profile from './pages/auth/Profile';
 import EmailVerification from './pages/auth/EmailVerification';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
-import PrivateRoute from './utils/PrivateRoute';
 import Footer from './components/Footer';
+import NotFound from './pages/NotFound';
+
+import { useAuthContext } from './hooks/useAuthContext';
 
 import 'flowbite';
 
 function App() {
+
+  const { signedin } = useAuthContext();
+
   return (
 
     <BrowserRouter>
         <Navbar />
         <Routes>
-
-            <Route element={<PrivateRoute />} >
-              <Route 
-                path='/events/create'
-                element={<CreateEvent />}
-              />
-            </Route>
 
             <Route 
               path='/'
@@ -42,24 +42,36 @@ function App() {
               element={<Event />}
             />
             <Route 
+              path='/events/create'
+              element={<CreateEvent />}
+            />
+            <Route 
+              path='/profile/:username'
+              element={<Profile />}
+            />
+            <Route 
               path='/auth/signup'
-              element={<SignUp />}
+              element={ !signedin ? <SignUp /> : <Navigate to='/' /> }
             />
             <Route 
               path='/auth/signin'
-              element={<SignIn />}
+              element={ !signedin ? <SignIn /> : <Navigate to='/' />}
             />
             <Route 
               path='/auth/email-verification/:verificationToken'
-              element={<EmailVerification />}
+              element={ !signedin ? <EmailVerification /> : <Navigate to='/' /> }
             />
             <Route 
               path='/auth/forgot-password'
-              element={<ForgotPassword />}
+              element={ !signedin ? <ForgotPassword /> : <Navigate to='/' /> }
             />
             <Route 
               path='/auth/reset-password/:resetToken'
-              element={<ResetPassword />}
+              element={ !signedin ? <ResetPassword /> : <Navigate to='/' />}
+            />
+            <Route 
+              path='*'
+              element={ <NotFound /> }
             />
         </Routes>
         <Footer />

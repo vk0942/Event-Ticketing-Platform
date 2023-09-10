@@ -2,34 +2,27 @@
 import { useEffect, useState } from 'react';
 import { Avatar, Dropdown, Navbar, Button } from 'flowbite-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 export default function NavbarWithDropdown() {
 
   const navigate = useNavigate();
 
-  const [user, setUser] = useState('');
+  const [userDetails, setUserDetails] = useState('');
+
+  const { signedin, user, dispatch } = useAuthContext();
 
   const handleSignout = async () => {
     localStorage.removeItem('userToken');
+    dispatch({ type: 'SIGNOUT' });
     navigate('/');
   }
 
   useEffect(() => {
-    
-    const getDetails = async () => {
-        const response = await fetch('/auth/user-details', {
-          method: 'GET',
-          headers: { 'Authorization' : `Bearer ${localStorage.getItem('userToken')}` },
-        });
-
-        const data = await response.json();
-
-        setUser(data.user);
-    }; 
-
-    if (localStorage.getItem('userToken')) getDetails();
-
-  }, []);
+    if (signedin) {
+      setUserDetails(user.user);
+    }
+  }, [user, dispatch]);
 
   return (
 
@@ -49,7 +42,7 @@ export default function NavbarWithDropdown() {
             <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white"> Event Ticketing </span>
           </Navbar.Brand>
 
-          { localStorage.getItem('userToken') ? 
+          { signedin ? 
 
               <div className="flex md:order-2 w-0">
                 <Dropdown
@@ -57,15 +50,15 @@ export default function NavbarWithDropdown() {
                   label={<Avatar alt="User settings" img="" rounded/>}
                 >
                   <Dropdown.Header>
-                    <span className="font-bold block text-sm w-40 my-2"> {user.username} </span>
-                    <span className="font-bold block truncate text-sm w-52 my-1"> {user.email} </span>
+                    <span className="font-bold block text-sm w-40 my-2"> {userDetails.username} </span>
+                    <span className="font-bold block truncate text-sm w-52 my-1"> {userDetails.email} </span>
                   </Dropdown.Header>
 
-                  <a href='/' className='font-medium text-black-600 dark:text-blue-500 px-4 py-2 w-40'> Profile </a>
+                  <a href={'/profile/' + userDetails.username} className='font-medium text-black-600 dark:text-blue-500 px-4 py-2 w-40'> Profile </a>
                   <Dropdown.Divider />
-                  <a href='/' className='font-medium text-black-600 dark:text-blue-500 px-4 py-2 w-40'> Your Events </a>
+                  <a href='/' className='font-medium text-black-600 dark:text-blue-500 px-4 py-2 w-40'> My Events </a>
                   <Dropdown.Divider />
-                  <a href='/' className='font-medium text-black-600 dark:text-blue-500 px-4 py-2 w-40'> Earnings </a>
+                  {/* <a href='/' className='font-medium text-black-600 dark:text-blue-500 px-4 py-2 w-40'> Earnings </a> */}
                   <Dropdown.Divider />
                   <Button gradientMonochrome="failure" className='font-medium text-white-600 dark:text-blue-500 px-0 py-0 mx-4 h-8 w-22' onClick={handleSignout}> Sign Out </Button>
                 </Dropdown>
@@ -96,7 +89,7 @@ export default function NavbarWithDropdown() {
 
             <Navbar.Link href="/events" className='font-bold text-base text-black-600 dark:text-blue-500 px-4 w-28'> Events </Navbar.Link>
 
-            <Navbar.Link href="/events/create" className='font-bold text-base text-black-600 dark:text-blue-500 mr-10 w-28'> Create Events </Navbar.Link>
+            <Navbar.Link href="/events/create" className='font-bold text-base text-black-600 dark:text-blue-500 mr-12 w-28'> Create Events </Navbar.Link>
 
             <Navbar.Link href="/" className='font-bold text-base text-black-600 dark:text-blue-500 px-4 w-28'> Pricing </Navbar.Link>
 
