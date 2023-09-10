@@ -17,8 +17,6 @@ import NotFound from './pages/NotFound';
 
 import { useAuthContext } from './hooks/useAuthContext';
 
-import 'flowbite';
-
 function App() {
 
   const { signedin } = useAuthContext();
